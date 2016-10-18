@@ -1,0 +1,15 @@
+#main-container {
+	padding-top:60px;
+}
+
+.job-row {
+	padding: 14px 0;
+}
+
+.job-row:nth-child(even) {
+	background-color: #fcfcfc;
+}
+
+.job-row:nth-child(odd) { border-bottom: 1px solid #f9f9f9; }
+
+.table-header-label { color: #9E9E9E; font-size:.8em; }
