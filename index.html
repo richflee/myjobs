@@ -20,26 +20,46 @@
 
 		<div id="main-container"></div>
 
+
+
 		<script type="text/babel">
 
 
 			var JobsList = React.createClass({
 				getInitialState() {
 					return { 
-						jobs: [ 
-							{ job_number: "534032", client: "Bulla Dairy", date: "14/10/2016" },
-							{ job_number: "534044", client: "LDV", date: "15/10/2016" },
-							{ job_number: "555251", client: "Wellcom NZ", date: "19/10/2016" }
-						]
+						jobs: [  ]
 					}
 				},
+				nextId() {
+					this.uniqueId = this.uniqueId || 0
+					return this.uniqueId++
+				},
+				nextJobNumber() {
+					return this.state.jobs.length++
+				},
+				add() {
+					
+					var jobs = [ 
+						...this.state.jobs, 
+						{
+							id: this.nextId(),
+							job_number: this.nextJobNumber(),
+							client: "Client name here",
+							date: "1/1/2016"
+						}
+					]
+					this.setState({jobs})
+				},
 				render() {
+
 					return (
 							<div className="row">
 								<JobsListHeaderBar />
 								{this.state.jobs.map((job, i) => {
 									return <JobRow key={i} jobNumber={job.job_number} client={job.client} date={job.date} />
 								})}
+								<button onClick={ () => this.add() }>Add job</button>
 							</div>
 						)
 				}
@@ -60,14 +80,39 @@
 
 			var JobRow = React.createClass({
 
-				render() {
+				getInitialState() {
+					return { editing: false }
+				},
+				edit() {
+					this.setState({editing: true})
+				},
+				save() {
+					this.setState({editing: false})
+				},
+				renderForm() {
+
+					return (
+							<div className="row">
+								<span className="small-2 medium-2 large-2 columns"><input type="text" value={this.props.jobNumber} /></span>
+								<span className="small-4 medium-4 large-4 columns"><input type="text" value={this.props.client} /></span>
+								<span className="small-4 medium-4 large-4 columns"><input type="text" value={this.props.date} /></span>
+								<span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.save() }>Save</button></span>
+							</div>
+						)
+				},
+				renderDisplay() {
 					return (
 						<div className="row job-row">
 							<span className="small-2 medium-2 large-2 columns">{this.props.jobNumber}</span>
-							<span className="small-6 medium-6 large-6 columns">{this.props.client}</span>
+							<span className="small-4 medium-4 large-4 columns">{this.props.client}</span>
 							<span className="small-4 medium-4 large-4 columns">{this.props.date}</span>
+							<span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.edit() }>edit</button></span>
 						</div>
 					)
+				},
+				render() {
+					return (this.state.editing) ? this.renderForm()
+                                          : this.renderDisplay()
 				}
 			})
 
