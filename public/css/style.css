@@ -1,5 +1,19 @@
+/* ELEMENTS */
+.edit-job-button { margin-bottom: 0; margin-right: 5px; }
+.delete-job-button { margin-bottom: 0; }
+
+
+/* STRUCTURAL */
+
+.container { 
+	margin: 0 auto;
+	max-width: 1200px;
+	overflow: hidden;
+	padding: 40px 0 0 0;
+}
+
 #main-container {
-	padding-top:60px;
+	padding-top:30px;
 }
 
 .job-row {
@@ -11,5 +25,7 @@
 }
 
 .job-row:nth-child(odd) { border-bottom: 1px solid #f9f9f9; }
+
+.job-row .text-wrapper { padding: 0.85em 1em; }
 
 .table-header-label { color: #9E9E9E; font-size:.8em; }

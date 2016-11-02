@@ -5,11 +5,11 @@
 		<meta charset="utf-8" />
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
-		<title>MyJobs - Job collator/tracker/helper/nerve-center</title>
+		<title>MyJobs - Job manager for day to day work tasks</title>
 
 		<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
-		<link href="public/css/style.css" rel="stylesheet">
 		<link href="public/libs/css/foundation.css" rel="stylesheet">
+		<link href="public/css/style.css" rel="stylesheet">
 
 		<script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
 		<script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
@@ -18,8 +18,11 @@
 	</head>
 	<body>
 
-		<div id="main-container"></div>
 
+		<div class="container">
+			<h1>myjobs</h1>
+			<div id="main-container"></div>
+		</div>
 
 
 		<script type="text/babel">
@@ -36,10 +39,9 @@
 					return this.uniqueId++
 				},
 				nextJobNumber() {
-					return this.state.jobs.length++
+					return this.state.jobs.length+1
 				},
 				add() {
-					
 					var jobs = [ 
 						...this.state.jobs, 
 						{
@@ -51,19 +53,42 @@
 					]
 					this.setState({jobs})
 				},
+				update(newClientName, newDateCreated, id) {
+					var jobs = this.state.jobs.map(
+                    	job => (job.id !== id) ?
+                       		job : 
+                        	{
+                            	...job, 
+                            	client: newClientName,
+                            	date: newDateCreated
+                        	}
+                    	)
+					this.setState({jobs})
+				},
+				remove(id) {
+					var jobs = this.state.jobs.filter( job => job.id !== id)
+					this.setState({jobs})
+				},
+				eachJob(job) {
+	                return (<Job key={job.id} 
+	                        		id={job.id}
+	                        		onChange={this.update}
+	                        		onRemove={this.remove}>{job}</Job>)
+	            },
 				render() {
-
 					return (
 							<div className="row">
 								<JobsListHeaderBar />
-								{this.state.jobs.map((job, i) => {
-									return <JobRow key={i} jobNumber={job.job_number} client={job.client} date={job.date} />
-								})}
-								<button onClick={ () => this.add() }>Add job</button>
+								{this.state.jobs.map(this.eachJob)}
+								<button onClick={ () => this.add() } className="button">Add job</button>
 							</div>
 						)
 				}
 			})
+
+
+			// ================================================================================
+
 
 			var JobsListHeaderBar = React.createClass({
 
@@ -71,14 +96,18 @@
 					return (
 						<div className="row job-row">
 							<span className="small-2 medium-2 large-2 columns table-header-label">Job num</span>
-							<span className="small-6 medium-6 large-6 columns table-header-label">Client</span>
-							<span className="small-4 medium-4 large-4 columns table-header-label">Date created</span>
+							<span className="small-4 medium-4 large-4 columns table-header-label">Client</span>
+							<span className="small-6 medium-6 large-6 columns table-header-label">Date created</span>
 						</div>
 					)
 				}
 			})
 
-			var JobRow = React.createClass({
+
+			// ================================================================================
+
+
+			var Job = React.createClass({
 
 				getInitialState() {
 					return { editing: false }
@@ -87,36 +116,47 @@
 					this.setState({editing: true})
 				},
 				save() {
+					this.props.onChange(this.refs.newClientName.value, this.refs.newDateCreated.value, this.props.id)
 					this.setState({editing: false})
 				},
+				remove() {
+	                this.props.onRemove(this.props.id)
+	            },
 				renderForm() {
-
 					return (
-							<div className="row">
-								<span className="small-2 medium-2 large-2 columns"><input type="text" value={this.props.jobNumber} /></span>
-								<span className="small-4 medium-4 large-4 columns"><input type="text" value={this.props.client} /></span>
-								<span className="small-4 medium-4 large-4 columns"><input type="text" value={this.props.date} /></span>
-								<span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.save() }>Save</button></span>
+							<div className="row job-form-row">
+								<span className="small-2 medium-2 large-2 columns text-wrapper">{this.props.children.job_number}</span>
+								<span className="small-4 medium-4 large-4 columns"><input type="text" ref="newClientName" defaultValue={this.props.children.client} /></span>
+								<span className="small-4 medium-4 large-4 columns"><input type="text" ref="newDateCreated" defaultValue={this.props.children.date} /></span>
+								<span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.save() } className="success hollow button">Save</button></span>
 							</div>
 						)
 				},
 				renderDisplay() {
 					return (
 						<div className="row job-row">
-							<span className="small-2 medium-2 large-2 columns">{this.props.jobNumber}</span>
-							<span className="small-4 medium-4 large-4 columns">{this.props.client}</span>
-							<span className="small-4 medium-4 large-4 columns">{this.props.date}</span>
-							<span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.edit() }>edit</button></span>
+							<span className="small-2 medium-2 large-2 columns text-wrapper">{this.props.children.job_number}</span>
+							<span className="small-4 medium-4 large-4 columns text-wrapper">{this.props.children.client}</span>
+							<span className="small-4 medium-4 large-4 columns text-wrapper">{this.props.children.date}</span>
+							<span className="small-2 medium-2 large-2 columns">
+								<button onClick={ () => this.edit() } className="hollow button edit-job-button" type="button">edit</button>
+								<button onClick={ () => this.remove() } className="alert  hollow button delete-job-button" type="button">delete</button>
+							</span>
 						</div>
 					)
 				},
 				render() {
-					return (this.state.editing) ? this.renderForm()
-                                          : this.renderDisplay()
+					return (this.state.editing) ? this.renderForm() : this.renderDisplay()
 				}
 			})
 
+			// ================================================================================
+
+
+
 			ReactDOM.render(<JobsList />, document.getElementById('main-container'))
+
+
 
 		</script>
 
