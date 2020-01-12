@@ -46,10 +46,15 @@ button {
 
 .job-row {
 	padding: 14px 0;
+	background-color: rgba(0,0,0,0.015);
 }
 
 .job-row:nth-child(even) {
-	background-color: #fcfcfc;
+	background-color: #fff;
+}
+
+.job-row button {
+	font-size: 0.8em;
 }
 
 .job-row:nth-child(odd) { border-bottom: 1px solid #f9f9f9; }
