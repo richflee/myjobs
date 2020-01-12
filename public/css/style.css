@@ -1,4 +1,9 @@
 /* BASIC SELECTORS */
+body {
+	background-color: #effffb;
+	color: #333;
+}
+
 button {
 	background: #4f98ca;
 	color: #fff;
@@ -20,6 +25,13 @@ button {
 
 
 /* STRUCTURAL */
+
+.job-row-header-wrapper {
+	background: rgba(0,0,0,0.075);
+	border-bottom: 1px solid #333;
+	display: flex;
+	margin-bottom: 0.25em;
+}
 
 .button-wrapper {
 	display: flex;
