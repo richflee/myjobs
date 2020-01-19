@@ -54,7 +54,7 @@ const JobsList = () => {
         onRemove={remove}
         client={job.client}
         date={job.date}
-        jobNumber={job.job_number}
+        jobNumber={job.jobNumber}
       >
         {job}
       </Job>
