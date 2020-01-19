@@ -1,62 +1,75 @@
-import * as React from 'react';
+import React, { useState } from "react";
 
-export class Job extends React.Component<any, any> {
-    constructor(props: any) {
-        super(props);
+const Job = ({ id, client, date, onRemove, onChange, jobNumber }: any) => {
+  const [editing, setEditing] = useState(false);
 
-        this.state = {
-            editing: false
-        };
+  let newClientName = React.createRef<HTMLInputElement>();
+  let newDateInput = React.createRef<HTMLInputElement>();
 
-        this.newClientName = React.createRef();
-        this.newDateInput = React.createRef();
-    }
+  function edit() {
+    setEditing(true);
+  }
 
-    newClientName: any;
-    newDateInput: any;
+  function save() {
+    onChange(newClientName.current.value, newDateInput.current.value, id);
+    setEditing(false);
+  }
 
-    edit() {
-        this.setState({editing: true});
-    };
+  function remove() {
+    onRemove(id);
+  }
 
-    save() {
-        this.props.onChange(this.newClientName.current.value, this.newDateInput.current.value, this.props.id);
-        this.setState({editing: false});
-    };
+  function renderForm() {
+    return (
+      <div className="row job-form-row">
+        <span className="small-4 medium-4 large-4 columns">
+          <input type="text" ref={newClientName} defaultValue={client} />
+        </span>
+        <span className="small-4 medium-4 large-4 columns">
+          <input type="text" ref={newDateInput} defaultValue={date} />
+        </span>
+        <span className="small-2 medium-2 large-2 columns">
+          <button onClick={() => save()} className="success hollow button">
+            Save
+          </button>
+        </span>
+      </div>
+    );
+  }
 
-    remove() {
-        this.props.onRemove(this.props.id)
-    };
+  function renderDisplay() {
+    return (
+      <div className="row job-row">
+        <span className="small-2 medium-2 large-2 columns text-wrapper">
+          {jobNumber}
+        </span>
+        <span className="small-4 medium-4 large-4 columns text-wrapper">
+          {client}
+        </span>
+        <span className="small-4 medium-4 large-4 columns text-wrapper">
+          {date}
+        </span>
+        <span className="small-2 medium-2 large-2 columns">
+          <button
+            onClick={() => edit()}
+            className="hollow button edit-job-button"
+            type="button"
+          >
+            edit
+          </button>
+          <button
+            onClick={() => remove()}
+            className="alert  hollow button delete-job-button"
+            type="button"
+          >
+            delete
+          </button>
+        </span>
+      </div>
+    );
+  }
 
-    renderForm() {
-        return (
-            <div className="row job-form-row">
-                <span className="small-4 medium-4 large-4 columns">
-                    <input type="text" ref={this.newClientName} defaultValue={this.props.client} />
-                </span>
-                <span className="small-4 medium-4 large-4 columns">
-                    <input type="text" ref={this.newDateInput} defaultValue={this.props.date} />
-                </span>
-                <span className="small-2 medium-2 large-2 columns"><button onClick={ () => this.save() } className="success hollow button">Save</button></span>
-            </div>
-        );
-    };
+  return editing ? renderForm() : renderDisplay();
+};
 
-    renderDisplay() {
-        return (
-            <div className="row job-row">
-                <span className="small-2 medium-2 large-2 columns text-wrapper">{this.props.jobNumber}</span>
-                <span className="small-4 medium-4 large-4 columns text-wrapper">{this.props.client}</span>
-                <span className="small-4 medium-4 large-4 columns text-wrapper">{this.props.date}</span>
-                <span className="small-2 medium-2 large-2 columns">
-                    <button onClick={ () => this.edit() } className="hollow button edit-job-button" type="button">edit</button>
-                    <button onClick={ () => this.remove() } className="alert  hollow button delete-job-button" type="button">delete</button>
-                </span>
-            </div>
-        )
-    };
-
-    render() {
-        return (this.state.editing) ? this.renderForm() : this.renderDisplay()
-    }
-}
+export default Job;

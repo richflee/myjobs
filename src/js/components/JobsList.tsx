@@ -1,105 +1,78 @@
-import * as React from 'react'
-import { Job } from './Job';
+import React, { Component, useState } from "react";
+import Job from "./Job";
+import JobsListHeaderBar from "./JobsListHeaderBar";
+import { IJob } from "../model/IJob";
 
-export interface IJob {
-    id: number;
-    job_number: number;
-    client: string;
-    date: string;
-}
+const JobsList = (props: any) => {
+  const [uniqueId, setUniqueId] = useState(1);
+  const [jobs, setJobs] = useState([]);
 
-export class JobsListHeaderBar extends React.Component<any, any> {
+  function nextId(): number {
+    setUniqueId(uniqueId + 1);
+    return uniqueId;
+  }
 
-    render() {
-        return (
-            <div className="row job-row">
-                <span className="small-2 medium-2 large-2 columns table-header-label">Job num</span>
-                <span className="small-4 medium-4 large-4 columns table-header-label">Client</span>
-                <span className="small-6 medium-6 large-6 columns table-header-label">Date created</span>
-            </div>
-        )
-    }
-}
+  function nextJobNumber() {
+    return jobs.length + 1;
+  }
 
-export class JobsList extends React.Component<any, any> {
-    constructor(props: any) {
-        super(props);
-        this.state = { 
-            jobs: [
-                {
-                    id: 0,
-                    job_number: 1,
-                    client: "FoodWorks",
-                    date: "1/1/2019"
-                }
-            ]
-        };
-        this.eachJob = this.eachJob.bind(this);
-        this.update = this.update.bind(this);
-        this.remove = this.remove.bind(this);
-    }
+  function add() {
+    const newJobs = [
+      ...jobs,
+      {
+        id: nextId(),
+        job_number: nextJobNumber(),
+        client: "Client name here",
+        date: "1/1/2016"
+      }
+    ];
+    setJobs(newJobs);
+  }
 
-    private uniqueId = 0;
+  function update(newClientName: string, newDateCreated: string, id: any) {
+    const newJobs = jobs.map((job: IJob) =>
+      job.id !== id
+        ? job
+        : {
+            ...job,
+            client: newClientName,
+            date: newDateCreated
+          }
+    );
 
-    nextId(): number {
-        this.uniqueId = this.uniqueId || 0
-        return this.uniqueId++
-    };
+    setJobs(newJobs);
+  }
 
-    nextJobNumber() {
-        return this.state.jobs.length+1
-    };
+  function remove(id: string) {
+    const newJobs = jobs.filter((job: IJob) => job.id !== +id);
+    setJobs(newJobs);
+  }
 
-    add() {
-        var jobs = [ 
-            ...this.state.jobs, 
-            {
-                id: this.nextId(),
-                job_number: this.nextJobNumber(),
-                client: "Client name here",
-                date: "1/1/2016"
-            }
-        ]
-        this.setState({jobs})
-    };
+  function renderJob(job: IJob) {
+    return (
+      <Job
+        key={job.id}
+        id={job.id}
+        onChange={update}
+        onRemove={remove}
+        client={job.client}
+        date={job.date}
+        jobNumber={job.job_number}
+      >
+        {job}
+      </Job>
+    );
+  }
 
-    update(newClientName: string, newDateCreated: string, id: any) {
-        var jobs = this.state.jobs.map(
-            (job: IJob) => (job.id !== id) ?
-                   job : 
-                {
-                    ...job, 
-                    client: newClientName,
-                    date: newDateCreated
-                }
-            )
-        this.setState({jobs})
-    };
+  return (
+    <div className="row">
+      <JobsListHeaderBar />
+      {jobs.map(renderJob)}
+      <button onClick={() => add()} className="button">
+        Add job
+      </button>
+    </div>
+  );
+};
 
-    remove(id: string) {
-        const jobs = this.state.jobs.filter((job: IJob) => job.id !== +id);
-        this.setState({ jobs });
-    };
-
-    eachJob(job: IJob) {
-        return (<Job key={job.id} 
-                        id={job.id}
-                        onChange={this.update}
-                        onRemove={this.remove}
-                        client={job.client}
-                        date={job.date}
-                        jobNumber={job.job_number}
-                        >{job}</Job>)
-    };
-
-    render() {
-        return (
-                <div className="row">
-                    <JobsListHeaderBar />
-                    {this.state.jobs.map(this.eachJob)}
-                    <button onClick={ () => this.add() } className="button">Add job</button>
-                </div>
-            )
-    };
-}
-
+export default JobsList;
