@@ -2,8 +2,9 @@ import React, { Component, useState } from "react";
 import Job from "./Job";
 import JobsListHeaderBar from "./JobsListHeaderBar";
 import { IJob } from "../model/IJob";
+import { uuid } from "../utils/utils";
 
-const JobsList = (props: any) => {
+const JobsList = () => {
   const [uniqueId, setUniqueId] = useState(1);
   const [jobs, setJobs] = useState([]);
 
@@ -12,16 +13,12 @@ const JobsList = (props: any) => {
     return uniqueId;
   }
 
-  function nextJobNumber() {
-    return jobs.length + 1;
-  }
-
   function add() {
     const newJobs = [
       ...jobs,
       {
         id: nextId(),
-        job_number: nextJobNumber(),
+        job_number: uuid(),
         client: "Client name here",
         date: "1/1/2016"
       }
