@@ -18,7 +18,7 @@ const JobsList = () => {
       ...jobs,
       {
         id: nextId(),
-        job_number: uuid(),
+        jobNumber: uuid(),
         client: "Client name here",
         date: "1/1/2016"
       }
