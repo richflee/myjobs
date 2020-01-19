@@ -5,19 +5,13 @@ import { IJob } from "../model/IJob";
 import { uuid } from "../utils/utils";
 
 const JobsList = () => {
-  const [uniqueId, setUniqueId] = useState(1);
   const [jobs, setJobs] = useState([]);
-
-  function nextId(): number {
-    setUniqueId(uniqueId + 1);
-    return uniqueId;
-  }
 
   function add() {
     const newJobs = [
       ...jobs,
       {
-        id: nextId(),
+        id: uuid(),
         jobNumber: uuid(),
         client: "Client name here",
         date: "1/1/2016"
@@ -41,7 +35,7 @@ const JobsList = () => {
   }
 
   function remove(id: string) {
-    const newJobs = jobs.filter((job: IJob) => job.id !== +id);
+    const newJobs = jobs.filter((job: IJob) => job.id !== id);
     setJobs(newJobs);
   }
 

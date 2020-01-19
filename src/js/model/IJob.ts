@@ -1,5 +1,5 @@
 export interface IJob {
-  id: number;
+  id: string;
   jobNumber: string;
   client: string;
   date: string;
